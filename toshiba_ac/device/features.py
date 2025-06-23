@@ -126,8 +126,11 @@ class ToshibaAcFeatures:
         s_ac_self_cleaning = list(ToshibaAcSelfCleaning)
         s_ac_energy_report = False
 
-        # Make sure merit feature string has 4 characters
-        merit_feature_hexstring = f"{merit_feature_hexstring:<04.4}"
+        # Make sure merit feature string has 4 characters by padding missing
+        # digits with zeros on the left. Previously the padding was done on the
+        # right side which resulted in incorrect bit positions when the merit
+        # feature string was shorter than four characters.
+        merit_feature_hexstring = merit_feature_hexstring.zfill(4)[-4:]
 
         merit_bits = ToshibaAcFeatures.MERIT_BITS_STRUCT.unpack(
             bytes.fromhex("0" + "0".join(f"{int(merit_feature_hexstring, base=16):016b}"))
